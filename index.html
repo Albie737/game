@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Island Adventure</title>
+    <title>Tropical Treasure Hunt</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            background-color: #e0f7fa;
+            background: linear-gradient(to bottom, #81d4fa, #b2ebf2);
+            margin: 0;
+            padding: 0;
         }
         h1 {
             color: #00796b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         #game-board {
             display: grid;
@@ -19,17 +22,21 @@
             grid-gap: 5px;
             margin: 20px auto;
             width: 360px;
+            border: 5px solid #00796b;
+            border-radius: 10px;
+            background-color: #ffffff;
         }
         .cell {
             width: 70px;
             height: 70px;
             border: 2px solid #00796b;
-            background-color: #ffffff;
+            background-color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             font-size: 16px;
+            overflow: hidden;
             transition: background-color 0.3s;
         }
         .cell:hover {
@@ -38,13 +45,12 @@
         .player {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
             position: absolute;
-            bottom: 5px;
-            left: 5px;
+            transition: all 0.3s;
         }
         .treasure {
-            background-color: gold;
+            background-image: url('https://via.placeholder.com/20?text=💰');
+            background-size: cover;
             width: 20px;
             height: 20px;
             position: absolute;
@@ -73,14 +79,20 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #004d40;
         }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #00796b;
+        }
     </style>
 </head>
 <body>
-    <h1>Island Adventure</h1>
+    <h1>Tropical Treasure Hunt</h1>
     <div id="game-board"></div>
     <div id="controls">
         <button onclick="rollDice()">Roll Dice</button>
@@ -90,10 +102,10 @@
     <script>
         const boardSize = 5;
         const players = [
-            { id: 1, position: 0, color: 'red', treasures: 0 },
-            { id: 2, position: 1, color: 'blue', treasures: 0 },
-            { id: 3, position: 2, color: 'green', treasures: 0 },
-            { id: 4, position: 3, color: 'orange', treasures: 0 }
+            { id: 1, position: 0, color: 'red', icon: '🐢', treasures: 0 },
+            { id: 2, position: 1, color: 'blue', icon: '🦜', treasures: 0 },
+            { id: 3, position: 2, color: 'green', icon: '🦎', treasures: 0 },
+            { id: 4, position: 3, color: 'orange', icon: '🐒', treasures: 0 }
         ];
         let currentPlayer = 0;
         const gameBoard = document.getElementById('game-board');
@@ -110,7 +122,10 @@
                     cell.appendChild(treasure);
                 }
                 if (i % 4 === 0) { // Event spaces
-                    cell.innerHTML += `<div class="event-card">Event! Draw a card!</div>`;
+                    const eventCard = document.createElement('div');
+                    eventCard.classList.add('event-card');
+                    eventCard.innerText = "Event! Draw a card!";
+                    cell.appendChild(eventCard);
                 }
                 gameBoard.appendChild(cell);
             }
@@ -127,7 +142,10 @@
                     cell.appendChild(treasure);
                 }
                 if (index % 4 === 0) {
-                    cell.innerHTML += `<div class="event-card">Event! Draw a card!</div>`;
+                    const eventCard = document.createElement('div');
+                    eventCard.classList.add('event-card');
+                    eventCard.innerText = "Event! Draw a card!";
+                    cell.appendChild(eventCard);
                 }
             });
             players.forEach(player => {
@@ -135,6 +153,7 @@
                 const playerToken = document.createElement('div');
                 playerToken.classList.add('player');
                 playerToken.style.backgroundColor = player.color;
+                playerToken.innerText = player.icon;
                 cell.appendChild(playerToken);
             });
         }
