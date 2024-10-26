@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Island Quest</title>
+    <title>Tropical Island Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
-            background: url('https://via.placeholder.com/800x600/81d4fa/00796b?text=Tropical+Background') no-repeat center center fixed;
+            background: url('https://images.unsplash.com/photo-1535767851651-16b99b68e8b8') no-repeat center center fixed;
             background-size: cover;
+            color: #fff;
             margin: 0;
             padding: 0;
-            color: white;
         }
         h1 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 3em;
+            margin: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
         }
         #game-board {
             display: grid;
@@ -23,12 +26,17 @@
             grid-gap: 5px;
             margin: 20px auto;
             width: 430px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 10px;
+            backdrop-filter: blur(5px);
         }
         .cell {
             width: 80px;
             height: 80px;
+            background: rgba(255, 255, 255, 0.8);
             border: 2px solid #00796b;
-            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -36,19 +44,20 @@
             transition: background-color 0.3s;
         }
         .cell:hover {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 1);
         }
         .player {
             width: 40px;
             height: 40px;
             position: absolute;
             transition: all 0.5s ease;
+            font-size: 1.5em;
         }
         .treasure {
-            background-image: url('https://via.placeholder.com/20/FFD700/000000?text=💰');
-            background-size: cover;
             width: 20px;
             height: 20px;
+            background-image: url('https://via.placeholder.com/20/FFD700/000000?text=💰');
+            background-size: cover;
             position: absolute;
             top: 10px;
             left: 10px;
@@ -63,31 +72,35 @@
             top: 20px;
             left: 20px;
             z-index: 10;
+            width: 150px;
         }
         #controls {
             margin-top: 20px;
         }
         button {
             margin: 5px;
-            padding: 10px;
+            padding: 10px 20px;
             background-color: #00796b;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.2s;
         }
         button:hover {
             background-color: #004d40;
+            transform: scale(1.05);
         }
         #message {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 1.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
 <body>
-    <h1>Island Quest</h1>
+    <h1>Tropical Island Adventure</h1>
     <div id="game-board"></div>
     <div id="controls">
         <button onclick="rollDice()">Roll Dice</button>
@@ -116,7 +129,7 @@
                     treasure.classList.add('treasure');
                     cell.appendChild(treasure);
                 }
-                if (i % 4 === 0) { // Event spaces
+                if (i % 4 === 0) {
                     const eventCard = document.createElement('div');
                     eventCard.classList.add('event-card');
                     eventCard.innerText = "Event! Draw a card!";
@@ -131,7 +144,7 @@
             cells.forEach(cell => {
                 cell.innerHTML = ''; // Clear cell
                 const index = cell.dataset.index;
-                if (Math.random() < 0.3 && Math.random() < 0.3) { // Randomly place treasures
+                if (Math.random() < 0.3 && Math.random() < 0.3) {
                     const treasure = document.createElement('div');
                     treasure.classList.add('treasure');
                     cell.appendChild(treasure);
@@ -147,7 +160,7 @@
                 const cell = cells[player.position];
                 const playerToken = document.createElement('div');
                 playerToken.classList.add('player');
-                playerToken.style.backgroundColor = player.color;
+                playerToken.style.color = player.color;
                 playerToken.innerText = player.icon;
                 cell.appendChild(playerToken);
             });
