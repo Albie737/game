@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Island Adventure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #e0f7fa;
+        }
+        h1 {
+            color: #00796b;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 70px);
+            grid-gap: 5px;
+            margin: 20px auto;
+            width: 360px;
+        }
+        .cell {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #00796b;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .cell:hover {
+            background-color: #b2ebf2;
+        }
+        .player {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+        }
+        .treasure {
+            background-color: gold;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .event-card {
+            display: none;
+            background-color: #00796b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+    <h1>Island Adventure</h1>
+    <div id="game-board"></div>
+    <div id="controls">
+        <button onclick="rollDice()">Roll Dice</button>
+        <button onclick="nextPlayer()">Next Player</button>
+    </div>
+    <div id="message"></div>
+    <script>
+        const boardSize = 5;
+        const players = [
+            { id: 1, position: 0, color: 'red', treasures: 0 },
+            { id: 2, position: 1, color: 'blue', treasures: 0 },
+            { id: 3, position: 2, color: 'green', treasures: 0 },
+            { id: 4, position: 3, color: 'orange', treasures: 0 }
+        ];
+        let currentPlayer = 0;
+        const gameBoard = document.getElementById('game-board');
+        const messageDiv = document.getElementById('message');
+
+        function createBoard() {
+            for (let i = 0; i < boardSize * boardSize; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                if (Math.random() < 0.3) {
+                    const treasure = document.createElement('div');
+                    treasure.classList.add('treasure');
+                    cell.appendChild(treasure);
+                }
+                if (i % 4 === 0) { // Event spaces
+                    cell.innerHTML += `<div class="event-card">Event! Draw a card!</div>`;
+                }
+                gameBoard.appendChild(cell);
+            }
+        }
+
+        function renderBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.innerHTML = ''; // Clear cell
+                const index = cell.dataset.index;
+                if (Math.random() < 0.3 && Math.random() < 0.3) { // Randomly place treasures
+                    const treasure = document.createElement('div');
+                    treasure.classList.add('treasure');
+                    cell.appendChild(treasure);
+                }
+                if (index % 4 === 0) {
+                    cell.innerHTML += `<div class="event-card">Event! Draw a card!</div>`;
+                }
+            });
+            players.forEach(player => {
+                const cell = cells[player.position];
+                const playerToken = document.createElement('div');
+                playerToken.classList.add('player');
+                playerToken.style.backgroundColor = player.color;
+                cell.appendChild(playerToken);
+            });
+        }
+
+        function rollDice() {
+            const diceRoll = Math.floor(Math.random() * 6) + 1;
+            const current = players[currentPlayer];
+            current.position = (current.position + diceRoll) % (boardSize * boardSize);
+            messageDiv.innerText = `Player ${current.id} rolled a ${diceRoll}!`;
+            checkEvent();
+            renderBoard();
+        }
+
+        function checkEvent() {
+            const current = players[currentPlayer];
+            const cell = document.querySelector(`.cell[data-index="${current.position}"]`);
+            const eventCard = cell.querySelector('.event-card');
+            if (eventCard) {
+                eventCard.style.display = 'block';
+                setTimeout(() => {
+                    const action = Math.random() < 0.5 ? 'gain' : 'lose';
+                    if (action === 'gain') {
+                        current.treasures++;
+                        messageDiv.innerText += ` Player ${current.id} gained a treasure!`;
+                    } else {
+                        if (current.treasures > 0) {
+                            current.treasures--;
+                            messageDiv.innerText += ` Player ${current.id} lost a treasure!`;
+                        } else {
+                            messageDiv.innerText += ` Player ${current.id} had no treasures to lose!`;
+                        }
+                    }
+                    eventCard.style.display = 'none';
+                }, 1500);
+            }
+        }
+
+        function nextPlayer() {
+            currentPlayer = (currentPlayer + 1) % players.length;
+            messageDiv.innerText += ` It's now Player ${players[currentPlayer].id}'s turn!`;
+        }
+
+        function initGame() {
+            createBoard();
+            renderBoard();
+            messageDiv.innerText = "Player 1 starts!";
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
